@@ -1,0 +1,12 @@
+{
+  "ModelName": "MyModel_TEC_5",
+  "ptFileName": null,
+  "InputShape": [
+    640,
+    640,
+    3
+  ],
+  "OutChannels": null,
+  "MinIdx": null,
+  "MaxIdx": null
+}

@@ -1,0 +1,23 @@
+{
+  "model_size": 640,
+  "last_trained_model_path": false,
+  "log_folder_path": "./log3/",
+  "use_adv": false,
+  "indexing_max": 48,
+  "indexing_min": 2,
+  "use_adversial": false,
+  "trained_advModel_path": null,
+  "training_max_steps": 500000,
+  "training_batch_size": 2,
+  "vis_training": true,
+  "save_log_after_N": 5000,
+  "test_after_N": 150,
+  "test_steps": 50,
+  "learning_rate": 0.0001,
+  "training_data_path": [
+"/home/alon/dently_7_19/30_7_19/1.10.19/data_seg_640/Record_ad489066-5155-490d-ae0d-cc8acbf261d4/",
+"/home/alon/dently_7_19/30_7_19/1.10.19/data_seg_640/record_a431ba3a-c11b-4b99-8041-b1f47a648eab/"
+
+  ],
+  "test_data_path": ["/home/alon/dently_7_19/30_7_19/1.10.19/data_seg_640/Record_d9e04b39-fdd1-43a6-b614-2d498e34ac42/"]
+}

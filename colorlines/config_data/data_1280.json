@@ -1,0 +1,7 @@
+{"host_name": "", 
+"port": 8000, 
+"img_size": [1280, 800, 3], 
+"skeleton_size": [20000, 3], 
+"start_str": "STA/", 
+"end_str": "END/", 
+"model":"C://SW//algo_nn_alon//colorlines//log//traind_model_1280_110500.pt"}

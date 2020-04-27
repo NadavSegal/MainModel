@@ -1,0 +1,33 @@
+{
+  "$id": "11",
+  "AutoRefresh": true,
+  "AutoRefreshRemotes": true,
+  "CommitTextLinks": null,
+  "DraftCommitMsg": "",
+  "IncomingSavedCount": 0,
+  "LastCheckedRemotes": "2020-03-29T14:55:27.382611+03:00",
+  "LastUsedView": 1,
+  "LogBranchFilterIndex": 0,
+  "OutgoingSavedCount": 1,
+  "SidebarExpandedItems": [
+    "File Status",
+    "Branches"
+  ],
+  "SidebarWidth": 210.0,
+  "SubtreeLinks": [],
+  "RemoteProjectLinks": [
+    {
+      "$id": "12",
+      "BaseUrl": "https://bitbucket.org/",
+      "Identifier": "dentlytec/algo_nn_alon",
+      "RemoteName": "origin",
+      "Type": 1,
+      "Username": null,
+      "CloneUrl": "git@bitbucket.org:dentlytec/algo_nn_alon.git",
+      "ProjectUrl": null,
+      "AccountId": null,
+      "AvatarUrl": null,
+      "DisplayName": "origin: https://bitbucket.org/"
+    }
+  ]
+}

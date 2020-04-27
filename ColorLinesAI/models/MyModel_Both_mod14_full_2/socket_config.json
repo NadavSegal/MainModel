@@ -1,0 +1,16 @@
+{
+  "HostName": "",
+  "port": 8000,
+  "InputShape": [
+    640,
+    640,
+    3
+  ],
+  "ReturnShape": [
+    15000,
+    3
+  ],
+  "BatchSize": 1,
+  "start_str": "STA/",
+  "end_str": "END/"
+}

@@ -1,0 +1,12 @@
+{
+  "ModelName": "MyModel_tooth_2",
+  "ptFileName": null,
+  "InputShape": [
+    640,
+    640,
+    3
+  ],
+  "OutChannels": null,
+  "MinIdx": 2,
+  "MaxIdx": 48
+}

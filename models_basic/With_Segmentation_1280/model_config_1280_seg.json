@@ -1,0 +1,22 @@
+{
+  "model_size": 1280,
+  "last_trained_model_path": false,
+  "log_folder_path": "./log3/",
+  "use_adv": false,
+  "indexing_max": 48,
+  "indexing_min": 2,
+  "use_adversial": false,
+  "trained_advModel_path": null,
+  "training_max_steps": 500000,
+  "training_batch_size": 1,
+  "vis_training": true,
+  "save_log_after_N": 5000,
+  "test_after_N": 150,
+  "test_steps": 50,
+  "learning_rate": 0.0001,
+  "training_data_path": [
+    "/home/alon/Downloads/Record_bf18ef27-970e-4024-9d58-6907d25aba02/"
+
+  ],
+  "test_data_path": ["/home/alon/Downloads/Record_bf18ef27-970e-4024-9d58-6907d25aba02/"]
+}

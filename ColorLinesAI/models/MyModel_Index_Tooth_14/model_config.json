@@ -1,0 +1,12 @@
+{
+  "ModelName": "MyModel_Index_Tooth_14",
+  "ptFileName": null,
+  "InputShape": [
+    640,
+    640,
+    3
+  ],
+  "OutChannels": null,
+  "MinIdx": null,
+  "MaxIdx": null
+}

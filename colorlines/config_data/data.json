@@ -1,0 +1,7 @@
+{"host_name": "", 
+"port": 8000, 
+"img_size": [640, 640, 3], 
+"skeleton_size": [15000, 3], 
+"start_str": "STA/", 
+"end_str": "END/", 
+"model":"C://SW//algo_nn_alon//colorlines//log//traind_model_185000_Tooth10_WithoutBlood_z_BGR_DLT3.pt"}

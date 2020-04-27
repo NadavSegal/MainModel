@@ -1,0 +1,12 @@
+{
+  "ModelName": "MyModel_Both_mod14_full_8_good",
+  "ptFileName": null,
+  "InputShape": [
+    640,
+    640,
+    3
+  ],
+  "OutChannels": null,
+  "MinIdx": null,
+  "MaxIdx": null
+}

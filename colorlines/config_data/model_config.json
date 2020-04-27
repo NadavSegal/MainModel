@@ -1,0 +1,28 @@
+{
+  "model_size": 640,
+  "last_trained_model_path": "/home/alon/dently_7_19/30_7_19/1.9.19/log/traind_model_165000.pt",
+  "log_folder_path": "./log/",
+  "use_adv": false,
+  "indexing_max": 48,
+  "indexing_min": 2,
+  "trained_advModel_path": null,
+  "training_max_steps": 500000,
+  "training_batch_size": 2,
+  "vis_training": true,
+  "save_log_after_N": 5000,
+  "test_after_N": 5000,
+  "test_steps": 100,
+  "learning_rate": 0.0001,
+  "training_data_path": [
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.1__Tooth9_WhitePlast_Iron_WithBlood_181118/",
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.2__Tooth10_WithoutBlood_z/",
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.2__1-Tooth11_S_12.6.2_calibfile070319_20190310/",
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.2__1-Tooth9_S_12.6.2_calibfile070319_20190310/",
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__RecordsAdi_FastScan__1-Tooth9_S_12.6.2_CalibFile240319_z_20190325/",
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.2__2-Tooth11_S_12.6.2_calibfile070319_20190310/",
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.2__3-Tooth9_S_12.6.2_calibfile070319_20190310/"
+  ],
+  "test_data_path": [
+    "/media/alon/SP PHD U3/AI_Ref/Rar/F__Records__ProtoTypeV2__Invitro__S_12.6.2__3-Tooth9_S_12.6.2_calibfile070319_20190310/"
+  ]
+}
