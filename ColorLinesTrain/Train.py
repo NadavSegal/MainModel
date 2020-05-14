@@ -7,6 +7,7 @@ from tqdm import tqdm
 import scipy
 from scipy import ndimage
 import numpy as np
+import torch.nn as nn
 
 
 class Train:
@@ -31,22 +32,23 @@ class Train:
             self.model = TrainUtils.loadWeights(self.model, pt_full_path, self.train_config['use_cuda'])
    
         self.model.train()
+        
 
         ###### set trainable to false
-        if not self.model_config["UseIdx"]:
+        if 0:#not self.model_config["UseIdx"]:
             ct = 0
             for child in self.model.children():
                 ct += 1
-                if ct < 16:
+                if ct < 28:
                     print(child)
                     for param in child.parameters():
                         param.requires_grad = False
 
-        if not self.model_config["UseSkel"]:
+        if 0:#not self.model_config["UseSkel"]:
             ct = 0
             for child in self.model.children():
                 ct += 1
-                if ct >= 16:
+                if ct >= 28:
                     print(child)
                     for param in child.parameters():
                         param.requires_grad = False
@@ -58,8 +60,15 @@ class Train:
             
             
         self.add_augmentation()
+        self.model.half()
+        self.batchnorm_to_fp32()
     
-            
+    def batchnorm_to_fp32(self):
+        for layer in self.model.modules():
+            if isinstance(layer, nn.BatchNorm2d):
+                layer.float()
+    
+    
     def add_augmentation(self):
         self.augmantation = dentlyset.ImgAugmantation(self.train_config["AugmantationConfig"])
             
@@ -81,7 +90,7 @@ class Train:
         for j in range(1):
             _, idx, _, _ = self.train_dentlyset.get_sample_for_train()
             y = idx/2
-            y = y % 28        
+            #y = y % 28        
             for i in range(1,28+1):
                 Weights[i-1] = Weights[i-1] + np.sum(y==i)
         
@@ -188,6 +197,7 @@ def mainTrainLoop():
             train_new.backward_step(batch_skel_loss)
             print(batch_skel_loss)
         if train_new.train_config["ModelConfig"]["UseIdx"]:
+            #train_new.model.float()
             train_new.backward_step(batch_idx_loss)
             print(batch_idx_loss)
 

@@ -73,8 +73,9 @@ class DentlyNet(nn.Module):
         # skeleton_pred = torchvision.transforms.Normalize(x1)
         # self.norm(x1)
         # skeleton_pred = F.normalize(x1, p=2, dim=1)
-        skeleton_pred = (x1 - torch.mean(x1)) / torch.sqrt(torch.var(x1) + 0.000001)
+        skeleton_pred = (x - torch.mean(x)) / torch.sqrt(torch.var(x) + 0.000001)
         final_res = torch.clone(indexing_argmax) + 1
+        skeleton_final = x
 
         final_res[0, skeleton_final[0, 0, :, :] < self.TH_skl] = 0
         final_res[0, indexing_pred[0, :, :] < self.TH_ind] = 0

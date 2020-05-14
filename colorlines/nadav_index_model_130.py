@@ -22,36 +22,25 @@ class DentlyNet(nn.Module):
         self.BottomMargins = 15
         self.leftMargin = 10
         self.rightMargin = 10
-        BN_momentum = 0.5 # default = 0.1
-        self.DroupoutP = 0.0 # default = 0.5
         ### indexing model:
         # P = ((S-1)*W-S+F)/2, with F = filter size, S = stride
 
-        self.down1_conv = nn.Conv2d(3, 28, kernel_size=(3, 3), bias = True,stride=(1, 1), padding=(1, 1))  # 320 9X7X5X24 = 7560
-        self.down1_conv_bn = nn.BatchNorm2d(28, track_running_stats=False, momentum = BN_momentum)
+        self.down0_conv = nn.Conv2d(3, 12, kernel_size=(131,131), bias=True, stride=(1, 1), padding=65)
+        self.bn0 = nn.BatchNorm2d(12, track_running_stats=False, momentum=0.5)
+        self.down1_conv = nn.Conv2d(12, 24, kernel_size=(3,3), stride=(1, 1), padding=1)
+        self.bn1 = nn.BatchNorm2d(24, track_running_stats=False, momentum=0.5)
+        self.down2_conv = nn.Conv2d(36, 36, kernel_size=(5,5), stride=(1, 1), padding=2)
+        self.bn2 = nn.BatchNorm2d(36, track_running_stats=False, momentum=0.5)
+        self.down3_conv = nn.Conv2d(36, output_channels, kernel_size=(1,1), stride=(1, 1), padding=0)
+        self.bn3 = nn.BatchNorm2d(output_channels, track_running_stats=False, momentum=0.5)
+        self.down4_conv = nn.Conv2d(output_channels, output_channels, kernel_size=(9,9), stride=(1, 1), padding=4)
+        self.bn4 = nn.BatchNorm2d(output_channels, track_running_stats=False, momentum=0.5)
+        self.down5_conv = nn.Conv2d(output_channels, output_channels, kernel_size=(5,5), stride=(1, 1), padding=2)
+        self.bn5 = nn.BatchNorm2d(output_channels, track_running_stats=False, momentum=0.5)
+        self.down6_conv = nn.Conv2d(56, output_channels, kernel_size=(1,1), stride=(1, 1), padding=0)
+        self.bn6 = nn.BatchNorm2d(output_channels, track_running_stats=False, momentum=0.5)
+        self.mp2d = torch.nn.MaxPool2d(kernel_size = (25,1), stride=(1, 1), padding=(12,0))
 
-        self.mp2d1 = torch.nn.MaxPool2d(kernel_size=(4, 4), stride=(4, 4), padding=(0, 0), return_indices=True)  # 80
-
-
-        self.down2_conv = nn.Conv2d(28, 28, kernel_size=(11, 9), bias = True, stride=(1, 1), padding=(5, 4))  # 24X31X9X24 = 160704
-        self.down2_conv_bn = nn.BatchNorm2d(28, track_running_stats=False, momentum = BN_momentum)
-
-        self.down3_conv = nn.Conv2d(28, 28, kernel_size=(11, 9), bias = True, stride=(1, 1), padding=(5, 4))  # 24X31X9X24 = 160704
-        self.down3_conv_bn = nn.BatchNorm2d(28, track_running_stats=False, momentum = BN_momentum)
-
-        self.down6_conv = nn.Conv2d(28, 28, kernel_size=(11, 9), bias = True, stride=(1, 1), padding=(5, 4))  # 24X3X3X96 = 20736
-        self.down6_conv_bn = nn.BatchNorm2d(28, track_running_stats=False, momentum = BN_momentum)
-
-
-        self.Unmp2d1 = torch.nn.MaxUnpool2d(kernel_size=(4, 4), stride=(4, 4), padding=(0, 0))
-
-        self.down7_conv = nn.Conv2d(31, 28, kernel_size=(3, 3), bias = True, stride=(1, 1), padding=(1, 1))  # 320 #24X7X5X9 = 7560
-        self.down7_conv_bn = nn.BatchNorm2d(28, track_running_stats=False, momentum = BN_momentum)
-
-        self.down8_conv = nn.Conv2d(28, 28, kernel_size=(3, 3), bias = True, stride=(1, 1), padding=(1, 1))  # 320 #24X7X5X9 = 7560
-        self.down8_conv_bn = nn.BatchNorm2d(28, track_running_stats=False, momentum = BN_momentum)
-
-        self.Unmp2d0 = nn.Upsample(scale_factor=2, mode='nearest')
 
         ### skeleton model:
         # P = ((S-1)*W-S+F)/2, with F = filter size, S = stride
@@ -135,47 +124,19 @@ class DentlyNet(nn.Module):
         skeleton_final = Variable(x8_2, requires_grad=False).cuda()
         #x1_addition = Variable(x1, requires_grad=False).cuda()
         #x_ind = torch.cat((x, x1_addition), 1)
-        x_ind = F.interpolate(x, size=320)
+        
+        xInd = F.leaky_relu(self.bn0(self.down0_conv(x)))
+        
+        xInd1 = F.leaky_relu(self.bn1(self.down1_conv(xInd)))
+        xInd = torch.cat((xInd, xInd1), 1)
+        xInd = F.leaky_relu(self.bn2(self.down2_conv(xInd)))
+        xInd = F.leaky_relu(self.bn3(self.down3_conv(xInd)))
+        xInd1 = F.leaky_relu(self.bn4(self.down4_conv(xInd)))
+        xInd = F.leaky_relu(self.bn5(self.down5_conv(xInd)))
+        xInd = torch.cat((xInd, xInd1), 1)
+        xInd = F.leaky_relu(self.down6_conv(xInd))
 
-        x_ind320 = self.down1_conv(x_ind)
-        x_ind320 = self.down1_conv_bn(x_ind320)
-        x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-        x_ind320 = F.leaky_relu(x_ind320)
-
-        x_ind320, index1 = self.mp2d1(x_ind320)
-
-        x_ind320 = self.down2_conv(x_ind320)
-        x_ind320 = self.down2_conv_bn(x_ind320)
-        x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-        x_ind320 = F.leaky_relu(x_ind320)
-
-        x_ind320 = self.down3_conv(x_ind320)
-        x_ind320 = self.down3_conv_bn(x_ind320)
-        x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-        x_ind320 = F.leaky_relu(x_ind320)
-
-        x_ind320 = self.down6_conv(x_ind320)
-        x_ind320 = self.down6_conv_bn(x_ind320)
-        x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-        x_ind320 = F.leaky_relu(x_ind320)
-
-        x_ind320 = self.Unmp2d1(x_ind320, index1)
-
-        x_ind320 = torch.cat((x_ind320, x_ind), 1)
-
-        x_ind320 = self.down7_conv(x_ind320)
-        x_ind320 = self.down7_conv_bn(x_ind320)
-        x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-        x_ind320 = F.leaky_relu(x_ind320)
-
-        x_ind320 = self.down8_conv(x_ind320)
-        x_ind320 = self.down8_conv_bn(x_ind320)
-        x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-        x_ind320 = F.leaky_relu(x_ind320)
-
-        x_ind320 = self.Unmp2d0(x_ind320)
-
-        indexing_tensor = x_ind320.narrow(1, 0, self.output_channels)  # [:,:49,:,:]
+        indexing_tensor = xInd.narrow(1, 0, self.output_channels)  # [:,:49,:,:]
         # indexing_tensor = torch.exp(F.log_softmax(indexing_tensor, 1))
         indexing_tensor = F.softmax(indexing_tensor, 1)
         indexing_pred, indexing_argmax = indexing_tensor.max(dim=1)
@@ -205,25 +166,25 @@ class DentlyNet(nn.Module):
         
         with torch.no_grad():
             ## skeleton model:
-
+    
             x1 = self.down0_convSkel(x)
             x1 = self.down0_conv_bnSkel(x1)
             x1 = F.leaky_relu(x1)
-
+    
             x1 = self.down1_convSkel(x1)
             x1 = self.down1_conv_bnSkel(x1)
             x1 = F.leaky_relu(x1)
-
+    
             x1 = self.down3_convSkel(x1)
             x1 = self.down3_conv_bnSkel(x1)
             x1 = F.leaky_relu(x1)
-
+    
             x1 = self.down2_convSkel(x1)
             x1 = self.down2_conv_bnSkel(x1)
             x1 = F.leaky_relu(x1)
-
+    
             # x1 = torch.sigmoid(x1)
-
+    
             x8_1, index = self.mp2dSkel(x1)
             x8_2 = self.Unmp2dSkel(x8_1, index)
             x9_1, index = self.mp2dSkel2(x1)
@@ -246,62 +207,34 @@ class DentlyNet(nn.Module):
             x8_2[0, 0, 550:570, :] = x9_2[0, 0, 550:570, :]
             x8_2[0, 0, 590:610, :] = x9_2[0, 0, 590:610, :]
             x8_2[0, 0, 630:640, :] = x9_2[0, 0, 630:640, :]
-
+    
             ### indexing model:
             skeleton_final = Variable(x8_2, requires_grad=False).cuda()
-            x1_addition = Variable(x1, requires_grad=False).cuda()
-            # x_ind = torch.cat((x, x1_addition), 1)
-            x_ind = F.interpolate(x, size=320)
-
-            x_ind320 = self.down1_conv(x_ind)
-            x_ind320 = self.down1_conv_bn(x_ind320)
-            x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-            x_ind320 = F.leaky_relu(x_ind320)
+            #x1_addition = Variable(x1, requires_grad=False).cuda()
+            #x_ind = torch.cat((x, x1_addition), 1)
+            
+            xInd = F.leaky_relu(self.bn0(self.down0_conv(x)))
+            
+            xInd1 = F.leaky_relu(self.bn1(self.down1_conv(xInd)))
+            xInd = torch.cat((xInd, xInd1), 1)
+            xInd = F.leaky_relu(self.bn2(self.down2_conv(xInd)))
+            xInd = F.leaky_relu(self.bn3(self.down3_conv(xInd)))
+            xInd1 = F.leaky_relu(self.bn4(self.down4_conv(xInd)))
+            xInd = F.leaky_relu(self.bn5(self.down5_conv(xInd)))
+            xInd = torch.cat((xInd, xInd1), 1)
+            xInd = F.leaky_relu(self.down6_conv(xInd))
     
-            x_ind320, index1 = self.mp2d1(x_ind320)
-    
-            x_ind320 = self.down2_conv(x_ind320)
-            x_ind320 = self.down2_conv_bn(x_ind320)
-            x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-            x_ind320 = F.leaky_relu(x_ind320)
-    
-            x_ind320 = self.down3_conv(x_ind320)
-            x_ind320 = self.down3_conv_bn(x_ind320)
-            x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-            x_ind320 = F.leaky_relu(x_ind320)
-    
-            x_ind320 = self.down6_conv(x_ind320)
-            x_ind320 = self.down6_conv_bn(x_ind320)
-            x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-            x_ind320 = F.leaky_relu(x_ind320)
-    
-            x_ind320 = self.Unmp2d1(x_ind320, index1)
-    
-            x_ind320 = torch.cat((x_ind320, x_ind), 1)
-    
-            x_ind320 = self.down7_conv(x_ind320)
-            x_ind320 = self.down7_conv_bn(x_ind320)
-            x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-            x_ind320 = F.leaky_relu(x_ind320)
-    
-            x_ind320 = self.down8_conv(x_ind320)
-            x_ind320 = self.down8_conv_bn(x_ind320)
-            x_ind320 = F.dropout(x_ind320,self.DroupoutP)
-            x_ind320 = F.leaky_relu(x_ind320)
-
-            x_ind320 = self.Unmp2d0(x_ind320)
-
-            indexing_tensor = x_ind320.narrow(1, 0, self.output_channels)  # [:,:49,:,:]
+            indexing_tensor = xInd.narrow(1, 0, self.output_channels)  # [:,:49,:,:]
             # indexing_tensor = torch.exp(F.log_softmax(indexing_tensor, 1))
             indexing_tensor = F.softmax(indexing_tensor, 1)
             indexing_pred, indexing_argmax = indexing_tensor.max(dim=1)
-
+    
             # skeleton_pred = torchvision.transforms.Normalize(x1)
             # self.norm(x1)
             # skeleton_pred = F.normalize(x1, p=2, dim=1)
             skeleton_pred = (x1 - torch.mean(x1)) / torch.sqrt(torch.var(x1) + 0.000001)
             final_res = torch.clone(indexing_argmax) + 1
-
+    
             final_res[0, skeleton_final[0, 0, :, :] < self.TH_skl] = 0
             final_res[0, indexing_pred[0, :, :] < self.TH_ind] = 0
             final_res[0, x[0, 0, :, :] < self.DarknessTH] = 0

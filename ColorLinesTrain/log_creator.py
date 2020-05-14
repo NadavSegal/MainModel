@@ -209,7 +209,7 @@ class test_summary:
             real_image[0, :, mask2 == 0] = 0
             real_image_orig[mask2 == 0,:] = 0
 
-            #final_res, skeleton_final, skeleton_pred, indexing_pred, indexing_argmax = self.eval_model.model.forward(real_image)
+            #final_res, skeleton_final, skeleton_pred, indexing_pred, indexing_argmax = self.eval_model.model.forward(real_image)           
             final_res, skeleton_final, skeleton_pred, indexing_tensor, indexing_argmax, indexing_pred = self.eval_model.model.forward_eval(real_image)
 
             with torch.no_grad():
@@ -284,8 +284,8 @@ class test_summary:
             skeleton_final[skeleton_final < 0.01] = 0
             #skeleton_final[skeleton_final < 50] = 0
 
-            cv2.imwrite(self.root_folder + '/{}_skelFinal.png'.format(img_number), skeleton_final)
-            cv2.imwrite(self.root_folder +'/{}_skel.png'.format(img_number), skeleton)
+            cv2.imwrite(self.root_folder + '/{}_skelFinal.png'.format(img_number), skeleton_final.astype(int))
+            cv2.imwrite(self.root_folder +'/{}_skel.png'.format(img_number), skeleton.astype(int))
             cv2.imwrite(self.root_folder +'/{}_skellabel.png'.format(img_number), y*255)
 
             

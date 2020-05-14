@@ -8,7 +8,7 @@ UI_config = {
   'port': 8000,
   'InputShape':  None,
   'ReturnShape': (15000, 3),
-  'BatchSize': 20,
+  'BatchSize': 4,
   'start_str': "STA/",
   'end_str': "END/"
 }
@@ -19,10 +19,11 @@ train_config = \
     {
      "TrainingLogDir": "./log",
      "modelsRootName": "trained_models",
-     "ModelPyPath": '/media/nadav/HDD2T/CarrierSpace/sw/algo_nn_nadav_both/ColorLinesTrain/log/ModelsBase/model.py',
+     "ModelPyPath": 'C:/sw/algo_nn_nadav_both/colorlines/nadav_index_modelrrshgsr.py',
      
      "ModelConfig": { 
-                        "ModelName": 'MyModel_6_test',
+                        "ModelName": 'MyModel_Both_mod16_Ygrad',
+                        "__ModelName": 'Nadav_Last',
                         "InputShape": (640, 640, 3),
                         "UseIdx": True,
                         "UseSeg": False,
@@ -30,26 +31,23 @@ train_config = \
                 },
 
       "RetrainModel": True,
-      "RetrainModel_fullpath": '/media/nadav/HDD2T/CarrierSpace/sw/algo_nn_nadav_both/ColorLinesTrain/log/MyModel_6_test/trained_models/traind_model_114000.pt',
-      "MaxSteps": 4000,
-      "BatchSize": 30,
-      "LogAfter": 200,
-      "TestSteps": 40,
-      "learningRate": 0.0001/30, #0.0001
+      "RetrainModel_fullpath": 'C:/sw/algo_nn_nadav_both/ColorLinesTrain/log/MyModel_Both_mod16_Ygrad/trained_models/traind_model_8_p15_p9_b3.pt',
+      "__RetrainModel_fullpath": 'C:/sw/algo_nn_nadav_both/ColorLinesTrain/log/Nadav_Last/trained_models/traind_model_78000_fromNadav.pt',
+      "MaxSteps": 1000000,
+      "BatchSize": 3,
+      "LogAfter": 1000,
+      "TestSteps": 50,
+      "learningRate": 0.001,
       
-      "DatasetConfig":{    
-          #"TrainingScansPath": ['/media/nadav/HDD2T/CarrierSpace/AI/ForAI_12.7.2_Accuracy_labelingTEC/Record.6062525a-de84-477e-8fc0-5eb8f340ce3c/AI_Labels_Shai_RT/',
-          #                      '/media/nadav/HDD2T/CarrierSpace/AI/ForAI_12.7.2_Accuracy_labelingTEC/Record.5e9c1d5d-f16e-4cea-8ad7-32791f03d347/'],
-          #"TestingScansPath": ['/media/nadav/HDD2T/CarrierSpace/AI/ForAI_12.7.2_Accuracy_labelingTEC/Record.6062525a-de84-477e-8fc0-5eb8f340ce3c/AI_Labels_Shai_RT/'],
-          "TrainingScansPath": [
-              '/media/nadav/HDD2T/CarrierSpace/AI/AI_Labels_inVivo_24/Record.0c54d637-0e4f-4f94-948d-9cf1931586a9_blueFilt_inVivoColorCube_GT_Extract/AI_Labels/',
-              '/media/nadav/HDD2T/CarrierSpace/AI/AI_Labels_inVivo_24/Record.1c8e5247-a5cc-4448-b630-b0bb23716395_blueFilt_inVivoColors_GT_Extract/AI_Labels/', 
-                                '/media/nadav/HDD2T/CarrierSpace/AI/AI_Labels_inVivo_24/Record.23500abf-6871-44b1-b4fb-db852ccf2fea_blueFilt_inVivoColor_extractGT/AI_Labels/',
-                                #'/media/nadav/HDD2T/CarrierSpace/AI/AI_Labels_inVivo_24/TestLabel/'
-                                ],
-          "TestingScansPath": ['/media/nadav/HDD2T/CarrierSpace/AI/AI_Labels_inVivo_24/Record.23500abf-6871-44b1-b4fb-db852ccf2fea_blueFilt_inVivoColor_extractGT/AI_Labels/'],
-          
-          
+      "DatasetConfig":{
+          "TrainingScansPath": ['D:/Results/Record.0c54d637-0e4f-4f94-948d-9cf1931586a9_GT_Extract_Clean/AI_Labels/',
+                                'D:/Results/Record.1c8e5247-a5cc-4448-b630-b0bb23716395_GT_Extract_Clean/AI_Labels/',
+                                'D:/Results/Record.23500abf-6871-44b1-b4fb-db852ccf2fea_GT_extract_Clean/AI_Labels/'
+								#'D:/Results/Record.0e77f80c-65ea-4e25-ab84-da25c9d41df0_GT_extract_3/AI_Labels'
+],
+          "TestingScansPath": ['D:/Results/Record.1c8e5247-a5cc-4448-b630-b0bb23716395_GT_Extract_Clean/AI_Labels/'],    
+          "__TestingScansPath": ['F:/Users/Igal/AI_Labels_inVivo_25/Record.0e77f80c_TEC_30_test_frames/'],    
+              
           #"CreatedDemoAlgoCommit": "000000",
           #"Scan": "12.2.7",
           #"InputShape": (640, 640, 3),

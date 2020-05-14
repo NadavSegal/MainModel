@@ -49,14 +49,15 @@ def postprocces_pred(output, arg_max):
 class Eval:
     def __init__(self, TrainingLogDir, ModelName, pyname):        
         self.model  = TrainUtils.importModel(TrainingLogDir, ModelName, pyname)
+        self.model.half()  # nadav
         self.model.eval()
         self.mp2d = torch.nn.MaxPool2d(kernel_size = (13,1), stride=(1, 1), padding=(6,0))
         self.gpu=torch.cuda.is_available()
         if self.gpu:
-            self.dtype = torch.cuda.FloatTensor
+            self.dtype = torch.cuda.HalfTensor
             self.dtype_l = torch.cuda.LongTensor
         else:
-            self.dtype = torch.FloatTensor
+            self.dtype = torch.HalfTensor
             self.dtype_l = torch.LongTensor
         
     def load_Weights(self, pt_trained_model_path=None):

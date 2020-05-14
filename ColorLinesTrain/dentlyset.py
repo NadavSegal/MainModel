@@ -141,6 +141,7 @@ class data_loader:
                                                           segmentation_ext=self.config["seg_ext"], 
                                                           input_format=self.config["image_format"][1:])
         print('Loading data completed')
+        self.n_id = 0
     
     def get_random_id(self):
         return randint(0, len(self.src_inputs_path) - 1)
@@ -178,6 +179,52 @@ class data_loader:
         
         
         return [src, idx, seg, c_path]
+
+
+    def get_serial_id(self):
+        return randint(0, len(self.src_inputs_path) - 1)
+
+    
+    def get_serial_sample(self):
+        #n_id = self.get_serial_id()     
+        image_format = self.config["image_format"]
+        if self.n_id == (len(self.src_inputs_path) - 1):
+            self.n_id = 0
+        else:
+            self.n_id += 1 
+        
+        n_id = self.n_id
+        
+        c_path = self.src_inputs_path[n_id].split(image_format)[0]
+        
+        src = None
+        idx = None
+        seg = None
+        
+        if not os.path.isfile(self.src_inputs_path[n_id]):
+            print("{0} not exist".format(self.src_inputs_path[n_id]))
+            src = np.zeros(self.config["InputShape"], dtype="uint8")
+        else:
+            src = load_image( c_path  + image_format)
+            
+        if self.config['UseIdx']:
+            if not os.path.isfile(c_path + self.config["indexing_ext"] + image_format):
+                print("{0} not exist".format(c_path + self.config["indexing_ext"] + image_format))
+                
+                idx = np.zeros(self.config["InputShape"], dtype="uint8")
+            else:
+                idx = load_image(c_path + self.config["indexing_ext"] + image_format) 
+        
+        if self.config['UseSeg']:
+            if not os.path.isfile(c_path + self.config["seg_ext"] + image_format):
+                print("{0} not exist".format(c_path + self.config["seg_ext"] + image_format))
+                
+                seg = np.zeros(self.config["InputShape"], dtype="uint8")
+            else:
+                seg = load_image(c_path + self.config["seg_ext"] + image_format)
+        
+        
+        return [src, idx, seg, c_path]    
     
     def create_new_mask(self, labels, mask_size):
         output = np.zeros((labels.shape[0], labels.shape[1]))
@@ -201,7 +248,8 @@ class data_loader:
     def get_sample_for_train(self):# 
                      
         
-        src, idx, seg, c_path = self.get_random_sample()
+        src, idx, seg, c_path = self.get_serial_sample()
+        #print(c_path)
         if self.config['UseIdx']:
             idx = idx[:, :, 0]
             

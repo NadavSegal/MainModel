@@ -40,7 +40,8 @@ def preprocess(self, x=None):
 def to_torch_format(x, to_cuda=False):
     
     if to_cuda:
-        x = torch.from_numpy(x).type(torch.cuda.FloatTensor)
+        #x = torch.from_numpy(x).type(torch.cuda.HalfTensor)
+        x = torch.from_numpy(x).type(torch.cuda.HalfTensor)
         x = x.cuda()
     else:
         x = torch.from_numpy(x).type(torch.FloatTensor)
@@ -140,8 +141,8 @@ def importModel(model_path, model_name=None, pyname=None):
         return foo.DentlyNet()
     
 def getOptimizer(modelParams, learningRate):
-    return torch.optim.Adam(modelParams, lr=learningRate)
-    #return torch.optim.SGD(modelParams, lr=learningRate)
+    #return torch.optim.Adam(modelParams, lr=learningRate)
+    return torch.optim.SGD(modelParams, lr=learningRate)
 #torch = importlib.import_module("torch")
 #torch.set_num_threads(100)
 class skeleton_based_loss(nn.Module):
@@ -207,7 +208,9 @@ class dont_care_crossentropy(nn.Module):
         self.device = torch.cuda.is_available()
         
         if self.device:
-            self.dtype = torch.cuda.FloatTensor
+            #self.dtype = torch.cuda.FloatTensor
+            self.dtype = torch.cuda.HalfTensor
+            #self.dtype_l = torch.cuda.LongTensor
             self.dtype_l = torch.cuda.LongTensor
         else:
             self.dtype = torch.FloatTensor
@@ -227,12 +230,14 @@ class dont_care_crossentropy(nn.Module):
         #self.criterion
             
     def forward(self, x_output=torch.randn(1, 28, 641, 641), y_labels=np.random.randint(0, 28, size=(1,1,641,641)), y1= np.random.randint(0, 28, size=(641,641))):
-#        y_labels[y_labels <= 0] = -1
-        c = x_output.shape[1]
+
         y_labelsr = y1[None, ...]
         #y_labelsrWide = y_labelsr.copy()
-        y_labelsr[0, 4:-4, :] = y_labelsr[0, 4:-4, :] + y_labelsr[0, 1:-7, :] + y_labelsr[0, 2:-6, :] + y_labelsr[0, 3:-5, :]\
-                                + y_labelsr[0, 5:-3, :] + y_labelsr[0, 6:-2, :] + y_labelsr[0, 7:-1, :]
+        y_labelsr[0, 3:-3, :] = y_labelsr[0, 3:-3, :] + y_labelsr[0, 1:-5, :] + y_labelsr[0, 2:-4, :]\
+                                + y_labelsr[0, 4:-2, :] + y_labelsr[0, 5:-1, :]
+                                
+        #y_labelsr[y_labelsr>56] = 0
+        #y_labels_r = torch.from_numpy(y_labelsr).type(self.dtype_l)
         y_labels_r = torch.from_numpy(y_labelsr).type(self.dtype_l)
 
 #        y_labels_r = y_labels_r + y_labels_r[]
@@ -246,16 +251,15 @@ class dont_care_crossentropy(nn.Module):
 #        logits_masked.insert(0, x_output[:,0,:,:]*y_labels_)#torch.zeros_like(y_labels_))
 #        
 #        logits_masked = torch.cat(logits_masked, 1)
+        y_labels_r[y_labels_r > 55] = 0 
         mask = y_labels_r > 0
         y_labels_r = torch.div(y_labels_r, 2)
-        y_labels_r = torch.remainder(y_labels_r, 28)
+        #y_labels_r = torch.remainder(y_labels_r, 28)
         #mask = mask.squeeze()
-        if c == 3:
-            loss = self.criterion(x_output, y_labels_r)
-        else:
-            loss = self.criterion(x_output, y_labels_r)
-        loss = torch.mean(loss[mask])
-        print(loss)
+        
+        loss = self.criterion(x_output, y_labels_r).float()/100000
+        loss = torch.sum(loss[mask==True])
+        #print(loss)
 #        loss = torch.sum(- labels_one_hot * F.log_softmax(logits_masked, 1), 1)
         return loss
     
